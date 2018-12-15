@@ -29,10 +29,14 @@ def filter_content(content, filter_tags):
 
     for i in range(len(tagged_tokens)):
         t = tagged_tokens[i]
+
         if i + 1 != len(tagged_tokens):
             next_t = tagged_tokens[i + 1]
             if t[1] not in filter_tags and next_t[0] != "'s":
                 filtered_tokens.append(t[0])
+
+        if t[0] == "'s" and tagged_tokens[i + 1][1] not in ["RBS"]:
+            filtered_tokens.append(tagged_tokens[i + 1][0])
 
     return " ".join(filtered_tokens)
 
@@ -60,7 +64,10 @@ def keep_content(content, keep_tags):
                     filtered_tokens.append(t[0])
             else:
                 filtered_tokens.append(t[0])
-    # tagged_filtered_tokens = nltk.pos_tag(filtered_tokens)
+
+        if t[0] == "'s" and tagged_tokens[i + 1][1] not in ["RBS"]:
+            tagged_tokens[i + 1] = (tagged_tokens[i + 1][0], "NN")
+
     return filtered_tokens
 
 
@@ -104,7 +111,7 @@ with open(sys.argv[2], 'w', encoding="utf-8") as output:
         print(i)
         # if i == 10:
         #     break
-        if page.title == "Army":
+        if page.title == "Smash (album)":
             content = page.content.replace(page.title, "")
             typ = extractType(content)
             if typ:
