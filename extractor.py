@@ -36,10 +36,17 @@ def keep_content(content, keep_tags):
     tokens = word_tokenize(content)
     tagged_tokens = nltk.pos_tag(tokens)
 
-    filtered_tokens = list(filter(lambda t: t[1] in keep_tags, tagged_tokens))
-
-    filtered_tokens = list(map(lambda t: t[0], filtered_tokens))
-
+    filtered_tokens = []
+    l = len(tagged_tokens)
+    for i in range(l):
+        t = tagged_tokens[i]
+        if t[1] in keep_tags:
+            if t[1] == "NN" and i != l - 1:
+                next_t = tagged_tokens[i + 1]
+                if next_t[1] != "NN":
+                    filtered_tokens.append(t[0])
+            else:
+                filtered_tokens.append(t[0])
     # tagged_filtered_tokens = nltk.pos_tag(filtered_tokens)
     return filtered_tokens
 
@@ -77,7 +84,7 @@ with open(sys.argv[2], 'w', encoding="utf-8") as output:
         print(i)
         # if i == 10:
         #     break
-        if page.title == "Thunderstorm":
+        if page.title == "Seam ripper":
             typ = extractType(page.content)
             print(typ)
             if typ:
