@@ -63,7 +63,7 @@ def extractType(content):
     if matches:
         matched_content = matches.group(2)
 
-    matches = re.search(r'(type of|area of) (.+)', matched_content)
+    matches = re.search(r'(type of|area of|range of|body of|word for|forms of|set of) (.+)', matched_content)
     if matches:
         matched_content = matches.group(2)
 
