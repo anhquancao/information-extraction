@@ -16,7 +16,6 @@ import re
 import nltk
 from nltk.tokenize import word_tokenize
 
-
 if len(sys.argv) != 3:
     print(__doc__)
     sys.exit(-1)
@@ -72,7 +71,7 @@ def keep_content(content, keep_tags):
     return filtered_tokens
 
 
-def extractType(content):
+def extractType(content, title):
     filter_tags = ["DT", "JJ", "JJS", "JJR", "JJ"]
     keep_tags = ["NN", "NNS", "NNP", "NNPS"]
 
@@ -84,8 +83,9 @@ def extractType(content):
     if matches:
         matched_content = matches.group(2)
 
-    matches = re.search(r'(type of|area of|range of|body of|word for|forms of|set of|part of|style of|strip of) (.+)',
-                        matched_content)
+    matches = re.search(
+        r'(genus of|number of|series of|parts of|kinds of|pieces of|subfamily of|subspecies of|order of|family of|sense of|sort of|version of|types of|members of|title of|category of|team of|branch of|species of|class of|form of|name of|item of|art of|timeline of|compounds of|way of|one of|amount of|kind of|piece of|collection of|group of|type of|area of|range of|body of|word for|forms of|set of|part of|style of|strip of) (.+)',
+        matched_content)
     if matches:
         old = matched_content
         matched_content = matches.group(2)
@@ -105,15 +105,13 @@ def extractType(content):
 
 with open(sys.argv[2], 'w', encoding="utf-8") as output:
     i = 0
+    l = []
     for page in Parser(sys.argv[1]):
-        # print(page.title)
-        # print(page.content)
+
         i += 1
-        print(i)
-        # if i == 10:
-        #     break
-        if page.title == "Ritual":
+
+        if page.title == "Tear gas":
             content = page.content.replace(page.title, "")
-            typ = extractType(content)
+            typ = extractType(content, page.title)
             if typ:
                 output.write(page.title + "\t" + typ + "\n")
