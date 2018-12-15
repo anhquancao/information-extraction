@@ -16,6 +16,7 @@ import re
 import nltk
 from nltk.tokenize import word_tokenize
 
+
 if len(sys.argv) != 3:
     print(__doc__)
     sys.exit(-1)
@@ -111,7 +112,7 @@ with open(sys.argv[2], 'w', encoding="utf-8") as output:
         print(i)
         # if i == 10:
         #     break
-        if page.title == "Smash (album)":
+        if page.title == "Ritual":
             content = page.content.replace(page.title, "")
             typ = extractType(content)
             if typ:
