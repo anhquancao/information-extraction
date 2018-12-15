@@ -29,16 +29,20 @@ def filter_content(content, filter_tags):
 
     for i in range(len(tagged_tokens)):
         t = tagged_tokens[i]
-        if t not in filter_tags:
-            if i + 1 != len(tagged_tokens):
-                next_t = tagged_tokens[i + 1]
-                if next_t[0] != "'s":
-                    filtered_tokens.append(t[0])
-            else:
+        if i + 1 != len(tagged_tokens):
+            next_t = tagged_tokens[i + 1]
+            if t[1] not in filter_tags and next_t[0] != "'s":
                 filtered_tokens.append(t[0])
 
-
     return " ".join(filtered_tokens)
+
+
+dic = {
+    'NNP': ['NNP', 'NNPS'],
+    'NNPS': ['NNP', 'NNPS'],
+    'NN': ['NN', 'NNS'],
+    'NNS': ['NN', 'NNS']
+}
 
 
 def keep_content(content, keep_tags):
@@ -50,9 +54,9 @@ def keep_content(content, keep_tags):
     for i in range(l):
         t = tagged_tokens[i]
         if t[1] in keep_tags:
-            if t[1] in keep_tags and i != l - 1:
+            if i != l - 1:
                 next_t = tagged_tokens[i + 1]
-                if next_t[1] not in keep_tags:
+                if next_t[1] not in dic[t[1]]:
                     filtered_tokens.append(t[0])
             else:
                 filtered_tokens.append(t[0])
@@ -72,9 +76,13 @@ def extractType(content):
     if matches:
         matched_content = matches.group(2)
 
-    matches = re.search(r'(type of|area of|range of|body of|word for|forms of|set of|part of|style of|strip of) (.+)', matched_content)
+    matches = re.search(r'(type of|area of|range of|body of|word for|forms of|set of|part of|style of|strip of) (.+)',
+                        matched_content)
     if matches:
+        old = matched_content
         matched_content = matches.group(2)
+        if abs(len(matched_content) - len(old)) > 20:
+            matched_content = old
 
     typs = keep_content(matched_content, keep_tags)
 
@@ -96,7 +104,7 @@ with open(sys.argv[2], 'w', encoding="utf-8") as output:
         print(i)
         # if i == 10:
         #     break
-        if page.title == "Petros Duryan":
+        if page.title == "Army":
             content = page.content.replace(page.title, "")
             typ = extractType(content)
             if typ:
