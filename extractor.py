@@ -63,13 +63,17 @@ def extractType(content):
     if matches:
         matched_content = matches.group(2)
 
+    matches = re.search(r'(type of|area of) (.+)', matched_content)
+    if matches:
+        matched_content = matches.group(2)
+
     typs = keep_content(matched_content, keep_tags)
 
     typ = None
     if typs and len(typs) > 0:
         typ = typs[0]
-        if len(typs) > 1 and typ == "type":
-            typ = typs[1]
+        # if len(typs) > 1 and typ == "type":
+        #     typ = typs[1]
 
     return typ
 
@@ -84,7 +88,7 @@ with open(sys.argv[2], 'w', encoding="utf-8") as output:
         print(i)
         # if i == 10:
         #     break
-        if page.title == "Seam ripper":
+        if page.title == "Communication Studies":
             typ = extractType(page.content)
             print(typ)
             if typ:
