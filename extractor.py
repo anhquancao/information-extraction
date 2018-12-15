@@ -40,23 +40,29 @@ def keep_content(content, keep_tags):
 
     filtered_tokens = list(map(lambda t: t[0], filtered_tokens))
 
+    # tagged_filtered_tokens = nltk.pos_tag(filtered_tokens)
     return filtered_tokens
 
 
 def extractType(content):
     filter_tags = ["DT", "JJ", "JJS", "JJR", "JJ"]
+    keep_tags = ["NN", "NNS", "NNP", "NNPS"]
 
     filtered_content = filter_content(content, filter_tags)
 
     matches = re.search(r'(is|was|are|were|be|mean|means) (.+)', filtered_content)
 
-    typ = None
+    matched_content = content
     if matches:
-        keep_tags = ["NN", "NNS", "NNP", "NNPS"]
         matched_content = matches.group(2)
-        typs = keep_content(matched_content, keep_tags)
-        if len(typs) > 0:
-            typ = typs[0]
+
+    typs = keep_content(matched_content, keep_tags)
+
+    typ = None
+    if typs and len(typs) > 0:
+        typ = typs[0]
+        if len(typs) > 1 and typ == "type":
+            typ = typs[1]
 
     return typ
 
@@ -71,7 +77,7 @@ with open(sys.argv[2], 'w', encoding="utf-8") as output:
         print(i)
         # if i == 10:
         #     break
-        if page.title == "Smash (album)":
+        if page.title == "Thunderstorm":
             typ = extractType(page.content)
             print(typ)
             if typ:
